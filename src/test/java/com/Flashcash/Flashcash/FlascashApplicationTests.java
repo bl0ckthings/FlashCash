@@ -1,0 +1,13 @@
+package com.Flashcash.Flashcash;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class FlascashApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

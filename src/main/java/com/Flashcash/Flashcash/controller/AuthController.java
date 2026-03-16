@@ -26,7 +26,7 @@ public class AuthController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final SessionService sessionService;
-    private final AccountRepository accountRepository;
+
 
     @GetMapping("auth/signup")
     public ModelAndView showSignUpForm() {
@@ -47,10 +47,8 @@ public class AuthController {
         return "redirect:/auth/signin";
     }
 
-    @GetMapping("/")
-    public ModelAndView showHomePage() {
-        System.out.println(sessionService.getCurrentUser());
 
-        return new ModelAndView("home");
-    }
+
+
+
 }

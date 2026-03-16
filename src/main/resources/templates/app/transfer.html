@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Contacts</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="w-full bg-slate-50 text-slate-900">
+<div th:insert="/header :: header"></div>
+<main class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10">
+        <div class="absolute -top-32 left-1/2 h-96 w-[36rem] -translate-x-1/2 rounded-full bg-gradient-to-r from-lime-200 via-emerald-200 to-teal-200 blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-gradient-to-br from-amber-200 via-orange-200 to-rose-200 blur-3xl"></div>
+    </div>
+    <div id="transferModal"
+         class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+
+        <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+
+            <h2 class="text-lg font-semibold mb-4">
+                Confirm transfer
+            </h2>
+
+            <div class="space-y-2 text-sm text-slate-700">
+                <p>
+                    <span class="font-semibold">Recipient:</span>
+                    <span id="modalRecipient"></span>
+                </p>
+                <p>
+                    <span class="font-semibold">Amount:</span>
+                    $<span id="modalAmount"></span>
+                </p>
+                <p>
+                    <span class="font-semibold">Amount after tax:</span>
+                    $<span id="modalTotal"></span>
+                </p>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-2">
+                <button
+                        type="button"
+                        onclick="closeModal()"
+                        class="px-4 py-2 bg-gray-300 rounded-xl">
+                    Cancel
+                </button>
+
+                <button
+                        type="button"
+                        onclick="submitTransferForm()"
+                        class="px-4 py-2 bg-emerald-500 text-white rounded-xl">
+                    Confirm
+                </button>
+            </div>
+
+        </div>
+    </div>
+    <section class="mx-auto w-full max-w-5xl px-6 pb-16 pt-10">
+        <div class="flex flex-col gap-8">
+            <div class="rounded-3xl border border-emerald-100 bg-white/90 p-8 shadow-lg">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm uppercase tracking-[0.2em] text-emerald-500" >Transfers</p>
+                        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Send money by email</h1>
+                        <p class="mt-2 max-w-xl text-sm text-slate-600">Choose a saved contact or enter a new email address to transfer funds.</p>
+                    </div>
+
+                    <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4 text-sm text-emerald-700 flex items-center gap-2" >
+                        <p>Balance : </p>
+                        <div class="flex items-center"> <p class="font-bold text-2xl">$</p>
+                            <p class="font-bold text-2xl" id="balance" th:text="${balance}"></p></div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-3xl border border-emerald-100 bg-white p-6 shadow-xl">
+                <form method="post" th:action="@{/app/transfer}" th:object="${transferForm}" class="grid gap-6" id="transfer-form">
+                    <div class="grid gap-6 lg:grid-cols-2">
+                        <div>
+                            <label for="contact-select" class="text-sm font-semibold text-slate-700">Select a contact</label>
+                            <select id="contact-select" th:field="*{recipientEmail}" class="mt-2 w-full rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none focus:border-emerald-300 focus:ring-2 focus:ring-emerald-200">
+                                <option value="">Choose a saved contact</option>
+                                <option th:each="contact : ${contacts}" th:value="${contact.email}" th:text="${contact.email}"></option>
+
+
+                            </select>
+                            <p class="mt-2 text-xs text-slate-500">Pick from your saved contacts list.</p>
+                        </div>
+                        <div>
+                            <label for="email-input" class="text-sm font-semibold text-slate-700">Or enter an email</label>
+                            <input id="email-input" type="email"
+                                   placeholder="name@email.com"
+                                    th:field="*{recipientEmail}"
+                                   class="mt-2 w-full rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-emerald-300 focus:ring-2 focus:ring-emerald-200">
+                            <p class="mt-2 text-xs text-slate-500">Typing here will disable the contact selector.</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="amount" class="text-sm font-semibold text-slate-700">Amount</label>
+                        <div class="relative mt-2">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">$</span>
+                            <input th:field="*{amount}" id="amount" type="number" placeholder="0.00" required
+                                   class="w-full rounded-xl border border-emerald-100 bg-white px-9 py-3 text-base text-slate-900 shadow-sm outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none placeholder:text-slate-400 focus:border-emerald-300 focus:ring-2 focus:ring-emerald-200">
+
+                        </div>
+                        <p class="mt-2 text-xs text-slate-500">Warning : There is a 0.5% fee on every transfer.</p>
+
+                    </div>
+
+
+
+                    <div class="flex flex-wrap gap-3">
+                        <button
+                                type="button"
+                                class="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600"
+                                onclick="openModal()">
+                            Transfer
+                        </button>
+                        <button type="button" class="inline-flex items-center justify-center rounded-full border border-emerald-200 px-6 py-2 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="rounded-3xl border border-emerald-100 bg-white p-6 shadow-xl">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-slate-900">Transaction history</h2>
+                    <span class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs uppercase tracking-[0.2em] text-emerald-600">Latest</span>
+                </div>
+                <div class="mt-6 overflow-hidden rounded-2xl border border-emerald-100">
+                    <table class="min-w-full text-left text-sm">
+                        <thead class="bg-emerald-50 text-xs uppercase tracking-[0.2em] text-emerald-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-4">Sender</th>
+                            <th scope="col" class="px-6 py-4">Recipient</th>
+                            <th scope="col" class="px-6 py-4">Amount</th>
+                            <th scope="col" class="px-6 py-4">Date</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-emerald-100">
+                        <tr th:each="transaction : ${transactions}">
+                            <td class="px-6 py-5 text-slate-800" th:text="${transaction.getSender().getEmail()}"></td>
+                            <td class="px-6 py-5 text-slate-600"th:text="${transaction.getRecipient().getEmail()}"></td>
+                            <td class="px-6 py-5 text-slate-900" th:text="'$' + ${transaction.getAmount()}"></td>
+                            <td class="px-6 py-5 text-slate-600" th:text="${transaction.getTimestamp()}"></td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    function openModal() {
+
+        const contactSelect = document.getElementById("contact-select");
+        const emailInput = document.getElementById("email-input");
+        const amountInput = document.getElementById("amount");
+        const balanceInput = document.getElementById("balance").textContent;
+
+        const recipient = emailInput.value.trim() || contactSelect.value.trim();
+        const amount = parseFloat(amountInput.value);
+        const balance = parseFloat(balanceInput);
+        console.log(balance);
+        console.log(amount);
+
+        if (!recipient) {
+            alert("Please select or enter a recipient email.");
+            return;
+        }
+
+        if (!amount || amount <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        const total = amount * 1.005;
+        if (balance < total) {
+            alert("Not enough fund for transfers");
+            return;
+        }
+        document.getElementById("modalRecipient").textContent = recipient;
+        document.getElementById("modalAmount").textContent = amount.toFixed(2);
+        document.getElementById("modalTotal").textContent = total.toFixed(2);
+
+        const modal = document.getElementById("transferModal");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    }
+
+    function closeModal() {
+        const modal = document.getElementById("transferModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    }
+
+    function submitTransferForm() {
+        document.getElementById("transfer-form").submit();
+    }
+
+    window.onclick = function(e) {
+        const modal = document.getElementById("transferModal");
+        if (e.target === modal) {
+            closeModal();
+        }
+    };
+
+    const contactSelect = document.getElementById("contact-select");
+    const emailInput = document.getElementById("email-input");
+
+    const syncFields = () => {
+        const emailHasValue = emailInput.value.trim().length > 0;
+        const selectHasValue = contactSelect.value.trim().length > 0;
+
+        if (emailHasValue) {
+            contactSelect.value = "";
+            contactSelect.disabled = true;
+            contactSelect.classList.add("opacity-60", "cursor-not-allowed");
+        } else {
+            contactSelect.disabled = false;
+            contactSelect.classList.remove("opacity-60", "cursor-not-allowed");
+        }
+
+        if (selectHasValue) {
+            emailInput.value = "";
+            emailInput.disabled = true;
+            emailInput.classList.add("opacity-60", "cursor-not-allowed");
+        } else {
+            emailInput.disabled = false;
+            emailInput.classList.remove("opacity-60", "cursor-not-allowed");
+        }
+    };
+
+    contactSelect.addEventListener("change", syncFields);
+    emailInput.addEventListener("input", syncFields);
+</script>
+</body>
+</html>

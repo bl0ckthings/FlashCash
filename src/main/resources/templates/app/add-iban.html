@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Add cash</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="w-full bg-slate-50 text-slate-900">
+<div th:insert="/header :: header"></div>
+
+<main class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10">
+        <div class="absolute -top-32 left-1/2 h-96 w-[36rem] -translate-x-1/2 rounded-full bg-gradient-to-r from-lime-200 via-emerald-200 to-teal-200 blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-gradient-to-br from-amber-200 via-orange-200 to-rose-200 blur-3xl"></div>
+    </div>
+
+    <section class="mx-auto w-full max-w-5xl px-6 pb-16 pt-10">
+        <div class="flex flex-col gap-8">
+            <div class="rounded-3xl border border-emerald-100 bg-white/90 p-8 shadow-lg">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm uppercase tracking-[0.2em] text-emerald-500">Banking</p>
+                        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Add an IBAN</h1>
+                        <p class="mt-2 max-w-xl text-sm text-slate-600">Link a bank account to enable wire transfers and withdrawals.</p>
+                    </div>
+                    <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4 text-sm text-emerald-700">
+                        Secure verification • No fees
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-3xl border border-emerald-100 bg-white p-6 shadow-xl">
+                <form th:action="@{/app/add-iban}" method="post" class="grid gap-6" th:object="${ibanForm}" >
+                    <div>
+                        <label for="iban" class="text-sm font-semibold text-slate-700">IBAN</label>
+                        <input id="iban" type="text"
+                               placeholder="FR76 3000 6000 0112 3456 7890 189"
+                               required
+                               th:field="*{iban}"
+                               class="mt-2 w-full rounded-xl border border-emerald-100 bg-white px-4 py-3 text-base text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:border-emerald-300 focus:ring-2 focus:ring-emerald-200">
+                        <p class="mt-2 text-xs text-slate-500">We accept standard IBAN formats (FR, DE, ES, IT, NL, BE, etc.).</p>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <button type="submit" class="inline-flex items-center justify-center rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-white transition hover:bg-emerald-600">Add IBAN</button>
+                        <button type="button" class="inline-flex items-center justify-center rounded-full border border-emerald-200 px-6 py-2 text-sm font-semibold text-emerald-700 transition hover:border-emerald-300">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="rounded-3xl border border-emerald-100 bg-white p-6 shadow-xl">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-slate-900">Your IBANs</h2>
+                    <span class="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs uppercase tracking-[0.2em] text-emerald-600">Saved</span>
+                </div>
+                <div class="mt-6 overflow-hidden rounded-2xl border border-emerald-100">
+                    <table class="min-w-full text-left text-sm">
+                        <thead class="bg-emerald-50 text-xs uppercase tracking-[0.2em] text-emerald-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-4">IBAN</th>
+                            <th scope="col" class="px-6 py-4">Bank</th>
+                            <th scope="col" class="px-6 py-4">Status</th>
+                        </tr>
+                        </thead>
+                        <tbody class="divide-y divide-emerald-100">
+                        <tr th:each="iban : ${ibans}">
+                            <td class="px-6 py-5 text-slate-800"  th:text="${iban}" ></td>
+                            <td class="px-6 py-5 text-slate-600">Crédit Agricole</td>
+                            <td class="px-6 py-5"><span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Verified</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

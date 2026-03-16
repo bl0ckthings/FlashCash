@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Contacts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="w-full">
+<div th:insert="/header :: header"></div>
+<h1 class="text-center text-3xl font-bold font-mono mb-5">Your list of Contact</h1>
+<!-- Add Contact -->
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm p-6 mb-6 w-[80%] mx-auto">
+
+    <form th:action="@{/app/contact}" th:object="${emailForm}" method="post"
+          class="flex flex-col sm:flex-row gap-3 sm:items-center">
+
+        <input
+                type="email"
+                required
+                placeholder="myemail@email.com"
+                th:field="*{email}"
+                class="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm
+                   text-gray-700 placeholder-gray-400
+                   focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition"
+        >
+
+        <button
+                type="submit"
+                class="px-5 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium
+                   hover:bg-emerald-700 transition shadow-sm"
+        >
+            Add contact
+        </button>
+
+    </form>
+
+</div>
+<div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm bg-white w-[80%] mx-auto">
+    <table class="min-w-full divide-y divide-gray-200 text-sm">
+
+        <!-- Header -->
+        <thead class="bg-gray-50">
+        <tr class="text-left text-xs font-semibold uppercase tracking-wider text-gray-600">
+            <th class="px-6 py-4">First Name</th>
+            <th class="px-6 py-4">Last Name</th>
+            <th class="px-6 py-4">Email</th>
+            <th class="px-6 py-4 text-center">Action</th>
+        </tr>
+        </thead>
+
+        <!-- Body -->
+        <tbody class="divide-y divide-gray-100 bg-white">
+        <tr class="hover:bg-gray-50 transition" th:each="contact : ${contacts}">
+
+            <td class="px-6 py-4 font-medium text-gray-800" th:text="${contact.firstName}"></td>
+
+            <td class="px-6 py-4 text-gray-700" th:text="${contact.lastName}"></td>
+
+            <td class="px-6 py-4 text-gray-600" th:text="${contact.email}"></td>
+
+            <td class="px-6 py-4 text-center space-x-3">
+                <a
+                        class="text-blue-600 hover:text-blue-800 font-medium transition"
+                >
+                    Edit
+                </a>
+
+                <span class="text-gray-300">|</span>
+
+                <a
+                        class="text-red-500 hover:text-red-700 font-medium transition"
+                >
+                    Delete
+                </a>
+            </td>
+
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+</body>

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -24,9 +25,9 @@ public class Transactions {
     private User sender;
     private BigDecimal amount;
     @CreatedDate
-    private LocalDate timestamp;
+    private LocalDateTime timestamp;
 
-    public Transactions(User recipient, User sender, BigDecimal amount ,LocalDate timestamp) {
+    public Transactions(User recipient, User sender, BigDecimal amount ,LocalDateTime timestamp) {
         this.recipient = recipient;
         this.sender = sender;
         this.amount = amount;

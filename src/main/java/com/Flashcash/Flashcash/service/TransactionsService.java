@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -29,8 +30,6 @@ public class TransactionsService {
 
         @Transactional
         public void TransferCash(TransferForm transferForm) throws Exception {
-
-
             Account senderAccount = userService.getUserAccount();
             if (senderAccount.getBalance().compareTo(transferForm.getAmount()) > 0) {
                 BigDecimal tax = transferForm.getAmount().multiply(new BigDecimal("0.005"));
@@ -47,7 +46,7 @@ public class TransactionsService {
                         recipientUser,
                         sessionService.getCurrentUser(),
                         transferForm.getAmount(),
-                        LocalDate.now()
+                        LocalDateTime.now()
                 );
                 transactionsRepository.save(tx);
             }
